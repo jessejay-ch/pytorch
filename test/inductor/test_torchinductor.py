@@ -4718,8 +4718,13 @@ class CommonTemplate:
         device = "cpu"
         for name in [
             "test_as_strided",  # buffer reuse
+            "test_bmm1",
+            "test_bmm2",
             "test_cat",  # alias
+            "test_linear1",
+            "test_linear2",
             "test_lowmem_dropout1",  # None as output
+            "test_mm_views",
             "test_profiler_mark_wrapper_call",  # TODO: fallback to default wrapper for now
             "test_reduction1",  # Reduction
             "test_relu",  # multiple inputs
