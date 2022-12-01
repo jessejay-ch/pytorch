@@ -220,6 +220,12 @@ jobs:
         with:
           file-suffix: ${{ github.job }}-${{ matrix.config }}-${{ matrix.shard }}-${{ matrix.num_shards }}-${{ matrix.runner }}_${{ steps.get-job-id.outputs.job-id }}
 
+      - name: Collect backtraces from coredumps (if any)
+        if: always()
+        run: |
+          # shellcheck disable=SC2156
+          find . -iname "core.[1-9]*" -exec docker exec "${DOCKER_CONTAINER_ID}" sh -c "gdb python {} -ex 'bt' -ex 'q'" \;
+
       - name: Store Core dumps on S3
         uses: seemethere/upload-artifact-s3@v5
         if: failure()
