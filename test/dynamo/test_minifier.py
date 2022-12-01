@@ -113,7 +113,9 @@ class MinifierTests(MinifierTestBase):
         )
 
     def test_after_dynamo_cpu_accuracy_error(self):
-        self._test_after_dynamo("cpu", 4, RELU_ACCURACY_ERROR_BACKEND, "AccuracyError")
+        self._test_after_dynamo(
+            "cpu", 4, RELU_ACCURACY_ERROR_BACKEND, "Accuracy failed"
+        )
 
     @requires_cuda()
     def test_after_dynamo_cuda_compile_error(self):
@@ -129,7 +131,9 @@ class MinifierTests(MinifierTestBase):
 
     @requires_cuda()
     def test_after_dynamo_cuda_accuracy_error(self):
-        self._test_after_dynamo("cuda", 4, RELU_ACCURACY_ERROR_BACKEND, "AccuracyError")
+        self._test_after_dynamo(
+            "cuda", 4, RELU_ACCURACY_ERROR_BACKEND, "Accuracy failed"
+        )
 
     # Ensure that the testing backends pass when relu is not present.
     def _test_after_dynamo_backend_passes(self, device, repro_level, backend_code):
@@ -193,11 +197,15 @@ class MinifierTests(MinifierTestBase):
         """
         )
 
+        repro_after = "dynamo"
+        repro_level = 2
         test_code = self._gen_test_code(
-            run_code, "dynamo", 2, RELU_CUSTOM_ERROR_BACKEND, False
+            run_code, repro_after, repro_level, RELU_CUSTOM_ERROR_BACKEND, False
         )
         _, repro_dir = self._run_test_code(test_code)
-        launch_proc, _ = self._run_minifier_launcher("", repro_dir)
+        launch_proc, _ = self._run_minifier_launcher(
+            "", repro_dir, repro_after, repro_level
+        )
         self.assertIn("RuntimeError", launch_proc.stderr.decode("utf-8"))
 
     # Test that a module with mixed cpu/cuda parts with an error after dynamo can be repro'd
