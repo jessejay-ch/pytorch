@@ -328,8 +328,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
             # Run with 1 input tensor
             x = fn(torch.tensor([self.rank]))
             output = broadcast([x], i, 0)
-            # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-            self.assertEqualIgnoreType(torch.tensor([i]), output[0])
+            self.assertEqual(torch.tensor([i]), output[0])
 
             # Run with 2 input tensors
             num = 2
@@ -340,10 +339,8 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
                 ]
 
                 output = broadcast(xs, i, j)
-                # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-                self.assertEqualIgnoreType(torch.tensor([i * num + j]), output[0])
-                # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-                self.assertEqualIgnoreType(torch.tensor([i * num + j]), output[1])
+                self.assertEqual(torch.tensor([i * num + j]), output[0])
+                self.assertEqual(torch.tensor([i * num + j]), output[1])
 
         # Test overloaded convenience function
         x = torch.tensor([self.rank + 1.0])
@@ -429,8 +426,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
             fut = pg.allreduce([tensor], opts).get_future()
             fut.wait()
             result = fut.value()
-            # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-            self.assertEqualIgnoreType(expected, result[0])
+            self.assertEqual(expected, result[0])
 
         # Multi input tests
         tests = simple_multi_input_reduce_tests(self.rank, self.world_size)
@@ -442,8 +438,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
             fut.wait()
             result = fut.value()
             for tensor in result:
-                # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-                self.assertEqualIgnoreType(output, tensor)
+                self.assertEqual(output, tensor)
 
         # Test overloaded convenience function (defaults to using sum)
         x = fn(torch.tensor([self.rank + 1.0]))
@@ -481,8 +476,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
             work = pg.allreduce([tensor], opts)
             work.wait()
             result = work.result()
-            # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-            self.assertEqualIgnoreType(expected, result[0])
+            self.assertEqual(expected, result[0])
 
         # Multi input tests
         tests = simple_multi_input_reduce_tests(self.rank, self.world_size)
@@ -494,8 +488,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
             work.wait()
             result = work.result()
             for tensor in result:
-                # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-                self.assertEqualIgnoreType(output, tensor)
+                self.assertEqual(output, tensor)
 
         # Test overloaded convenience function (defaults to using sum)
         x = fn(torch.tensor([self.rank + 1.0]))
@@ -526,8 +519,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
         ]
         for i, future_handle in enumerate(future_handles):
             future_handle.wait()
-            # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-            self.assertEqualIgnoreType(
+            self.assertEqual(
                 torch.tensor(
                     [
                         (i * self.world_size)
@@ -605,8 +597,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
             fut.wait()
             result = fut.value()
             for result_tensor, expected in zip(result, outputs):
-                # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-                self.assertEqualIgnoreType(result_tensor, expected)
+                self.assertEqual(result_tensor, expected)
 
     @requires_gloo()
     def test_allreduce_coalesced_basics(self):
@@ -627,8 +618,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
         for i, future_handle in enumerate(future_handles):
             future_handle.wait()
             result = future_handle.value()
-            # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-            self.assertEqualIgnoreType(
+            self.assertEqual(
                 self._expected_output(i),
                 result,
                 msg="Mismatch in iteration {}".format(i),
@@ -1303,8 +1293,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
                 fut.wait()
                 result = fut.value()
                 if root == self.rank:
-                    # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-                    self.assertEqualIgnoreType(output, result[0])
+                    self.assertEqual(output, result[0])
 
     @requires_gloo()
     def test_reduce_basics(self):
@@ -1337,8 +1326,7 @@ class ProcessGroupGlooTest(MultiProcessTestCase):
             iter = i // self.world_size
             root = i % self.world_size
             if root == self.rank:
-                # TODO(#38095): Replace assertEqualIgnoreType. See issue #38095
-                self.assertEqualIgnoreType(
+                self.assertEqual(
                     torch.tensor(
                         [
                             (iter * self.world_size)
